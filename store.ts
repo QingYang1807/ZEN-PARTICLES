@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { ShapeType, ParticleState } from './types';
 
+export type Language = 'en' | 'zh';
+
 interface AppStore extends ParticleState {
+  language: Language;
+  setLanguage: (lang: Language) => void;
   setShape: (shape: ShapeType) => void;
   setColor: (color: string) => void;
   setExpansion: (expansion: number) => void;
@@ -12,6 +16,7 @@ interface AppStore extends ParticleState {
 }
 
 export const useAppStore = create<AppStore>((set) => ({
+  language: 'zh',
   shape: ShapeType.HEART,
   color: '#00ccff', // Default to Iron Man Cyan
   expansion: 0.5,
@@ -19,6 +24,7 @@ export const useAppStore = create<AppStore>((set) => ({
   isHandTracking: false,
   isAiConnected: false,
   handCoords: { left: null, right: null },
+  setLanguage: (language) => set({ language }),
   setShape: (shape) => set({ shape }),
   setColor: (color) => set({ color }),
   setExpansion: (expansion) => set({ expansion }),

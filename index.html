@@ -3,12 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ZenParticles AI</title>
+    <title>ZenParticles AI - Jarvis Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-      body { margin: 0; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
+      body { margin: 0; overflow: hidden; background: #000; font-family: 'Rajdhani', 'Noto Sans SC', sans-serif; }
       canvas { touch-action: none; }
+      
+      /* Jarvis Custom Animations */
+      @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+      @keyframes scan-line { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+      @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+      @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
+      @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
+
+      .animate-spin-slow { animation: spin-slow 10s linear infinite; }
+      .animate-spin-reverse { animation: spin-reverse 8s linear infinite; }
+      .animate-spin-fast { animation: spin-slow 2s linear infinite; }
+      .animate-pulse-ring { animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+      .animate-scan { animation: scan-line 4s linear infinite; }
+      .font-tech { font-family: 'Share Tech Mono', monospace; }
+      .font-cn { font-family: 'Noto Sans SC', sans-serif; }
+      
+      .glass-panel {
+        background: rgba(0, 20, 40, 0.6);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(0, 204, 255, 0.3);
+        box-shadow: 0 0 15px rgba(0, 204, 255, 0.1), inset 0 0 20px rgba(0, 204, 255, 0.05);
+      }
     </style>
   <script type="importmap">
 {
