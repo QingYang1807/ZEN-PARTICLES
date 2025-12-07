@@ -1,0 +1,8 @@
+{
+  "name": "ZenParticles AI",
+  "description": "A real-time interactive 3D particle system controlled by hand gestures and Gemini AI voice commands. Create shapes like Hearts, Flowers, and Saturn for Christmas and New Year celebrations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
