@@ -14,6 +14,10 @@ export interface ParticleState {
   particleCount: number;
   isHandTracking: boolean;
   isAiConnected: boolean;
+  handCoords: {
+    left: { x: number; y: number } | null;
+    right: { x: number; y: number } | null;
+  };
 }
 
 export interface HandLandmark {

@@ -4,7 +4,7 @@ import { useAppStore } from '../store';
 
 const HandTracker: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { setExpansion, setIsHandTracking } = useAppStore();
+  const { setExpansion, setIsHandTracking, setHandCoords } = useAppStore();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -55,36 +55,60 @@ const HandTracker: React.FC = () => {
             if (results.landmarks && results.landmarks.length > 0) {
                 setIsHandTracking(true);
                 
-                // Logic: Calculate distance between thumb tip (4) and index tip (8)
-                // If two hands, calculate distance between hand 1 index and hand 2 index
-                
                 let distance = 0;
+                let leftHand = null;
+                let rightHand = null;
+                
+                // Extract Hand Coordinates for HUD
+                // Note: MediaPipe x is normalized [0,1]. x=0 is left. 
+                // We usually mirror video, so x becomes 1-x for display if we mirror CSS.
+                // Here we assume standard orientation, we handle mirroring in HUD logic.
                 
                 if (results.landmarks.length === 1) {
                     const lm = results.landmarks[0];
                     const thumb = lm[4];
                     const index = lm[8];
+                    
+                    // Center of palm roughly
+                    const cx = lm[9].x; 
+                    const cy = lm[9].y;
+
+                    rightHand = { x: cx, y: cy };
+
                     distance = Math.sqrt(
                         Math.pow(thumb.x - index.x, 2) + 
                         Math.pow(thumb.y - index.y, 2)
                     );
-                    // Map 0.05 (closed) -> 0.3 (open) to 0 -> 1 expansion
                     distance = Math.max(0, Math.min(1, (distance - 0.05) * 4));
                 } else if (results.landmarks.length === 2) {
-                     const hand1 = results.landmarks[0][8];
-                     const hand2 = results.landmarks[1][8];
+                     const h1 = results.landmarks[0][8]; // Index tip
+                     const h2 = results.landmarks[1][8]; // Index tip
+                     
+                     // Roughly assign left/right based on x
+                     if (results.landmarks[0][9].x < results.landmarks[1][9].x) {
+                        rightHand = results.landmarks[0][9]; // Mirrored view logic
+                        leftHand = results.landmarks[1][9];
+                     } else {
+                        leftHand = results.landmarks[0][9];
+                        rightHand = results.landmarks[1][9];
+                     }
+
                      distance = Math.sqrt(
-                        Math.pow(hand1.x - hand2.x, 2) + 
-                        Math.pow(hand1.y - hand2.y, 2)
+                        Math.pow(h1.x - h2.x, 2) + 
+                        Math.pow(h1.y - h2.y, 2)
                     );
-                     // Map 0.1 -> 0.8 to 0 -> 2
                     distance = Math.max(0, Math.min(2, (distance - 0.1) * 2.5));
                 }
 
-                // Smooth dampening could be added here, but direct set is fine for responsiveness
+                setHandCoords({ 
+                    left: leftHand ? { x: leftHand.x, y: leftHand.y } : null,
+                    right: rightHand ? { x: rightHand.x, y: rightHand.y } : null
+                });
+
                 setExpansion(distance);
             } else {
                 setIsHandTracking(false);
+                setHandCoords({ left: null, right: null });
             }
         }
         animationFrameId = requestAnimationFrame(predictWebcam);
@@ -99,12 +123,12 @@ const HandTracker: React.FC = () => {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       if (handLandmarker) handLandmarker.close();
     };
-  }, [setExpansion, setIsHandTracking]);
+  }, [setExpansion, setIsHandTracking, setHandCoords]);
 
   return (
     <div className="fixed top-4 right-4 z-50 opacity-0 pointer-events-none">
        {/* Hidden video element for processing */}
-      <video ref={videoRef} autoPlay playsInline style={{ width: '320px', height: '240px' }}></video>
+      <video ref={videoRef} autoPlay playsInline style={{ width: '320px', height: '240px', transform: 'scaleX(-1)' }}></video>
     </div>
   );
 };

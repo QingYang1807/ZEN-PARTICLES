@@ -4,10 +4,11 @@ import { OrbitControls, Environment } from '@react-three/drei';
 import Particles from './components/Particles';
 import HandTracker from './components/HandTracker';
 import UI from './components/UI';
+import HUD from './components/HUD';
 
 const App: React.FC = () => {
   return (
-    <div className="w-full h-screen relative bg-black">
+    <div className="w-full h-screen relative bg-black overflow-hidden">
       {/* 3D Scene */}
       <Canvas camera={{ position: [0, 0, 8], fov: 60 }} gl={{ antialias: true }}>
         <color attach="background" args={['#050505']} />
@@ -34,6 +35,7 @@ const App: React.FC = () => {
 
       {/* Logic & UI Layers */}
       <HandTracker />
+      <HUD />
       <UI />
     </div>
   );
